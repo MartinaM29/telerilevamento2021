@@ -82,6 +82,11 @@ par(mfrow=c(2,1))
 plot(p224r63_2011$B1_sre) 
 plot(p224r63_2011$B2_sre)
 
+# par(mfcol...)
+par(mfcol=c(1,2)) #1 riga, 2 colonne
+plot(p224r63_2011$B1_sre) 
+plot(p224r63_2011$B2_sre)
+
 
 ## plot delle prime 4 bande di Landsat
 par(mfrow=c(4,1)) #4 righe, 1 colonna
