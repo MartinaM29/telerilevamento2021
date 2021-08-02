@@ -3,6 +3,8 @@
 
 #install.packages("raster") #se ancora non si è installato il pacchetto
 library(raster) #COSA FA RASTER, il pacchetto sp, gestisce tutti i dati all'interno del softwer, in questo caso raster
+#install.packages("RStoolbox")
+library(RStoolbox)
 
 #setwd("~/lab/")#Linux
 setwd("C:/lab_telerilevamento/")  # Windows
@@ -10,7 +12,7 @@ setwd("C:/lab_telerilevamento/")  # Windows
 
 
 #zona di studio Riserva di Parakana
-p224r63_2011 <- brick("p224r63_2011_masked.grd") #con brick si carica l'intero blocco delle bande, le "" si usano per chiamare file fuori da R
+p224r63_2011 <- brick("p224r63_2011_masked.grd") #con brick si importano immagini dall'esterno, si carica l'intero blocco delle bande, le "" si usano per chiamare file fuori da R
 # quindi il file "p224r63_2011" contiene tutte le bande Landsat
 #queste operazioni devono essere eseguite ogni volta che si apre R
 plot(p224r63_2011) #plot con tutte le bande, 7 grafici
@@ -115,6 +117,77 @@ cln<-colorRampPalette(c('red','orange','yellow'))(100)
 plot(p224r63_2011$B4_sre, col=cln)
 
 
+### visualizzazione dati tramite plot RGB (Red, Green, Blue)
+## Bande Landsat (lunghezze d'onda a cui vengono registrate le immagini Landsat)
+# B1: blu 
+# B2: verde
+# B3: rosso
+# B4: NIR (NB:infrarosso vicino, vicino perchè è vicino alla parte visibile dell'occhio umano)
+# B5: infrarosso medio, SWIR (short wave infrared)
+# B6: infrarosso termico (infrarosso lontano)
+# B7: infrarosso medio (altro sensore per l'infrarosso medio)
+
+
+## schema RGB = ogni schermo ha uno schema fisso per mostrare i colori, chiamato appunto RGB
+# per vedere quindi un'immagine come se fosse a colori naturali, si monta R con la banda 3, G con la banda 2 e B con la banda 1 (schema 3,2,1)
+# funzione: plotRGB
+
+plotRGB(p224r63_2011,r=3,g=2,b=1, stretch="Lin")
+#stretch prende i valori delle singole bande (quindi la riflettanza delle singole bande) e li tira per fare in modo che non ci sia schiacciamento in una sola parte del colore
+#Lin = lineare
+#hist = histogram stretch, non lineare
+#stretch è solo per scopi di visualizzazione non cambia i valori
+#l'immagine creata quindi si chiama immagine a colori naturali
+#in questo caso non si usano i nomi delle bande perchè la funzione è pensata per il numero del layer
+
+
+# cambio di colori
+plotRGB(p224r63_2011,r=4,g=3,b=2, stretch="Lin") #NIR=red,rosso=green,verde=blue
+#NB: la vegetazione assorbe la banda blu e rossa e rifletta la banda verde e tantissimo la banda NIR
+#visualizzazione in falsi colori = falsi rispetto al nostro occhio
+plotRGB(p224r63_2011,r=3,g=4,b=2, stretch="Lin")
+#la parte viola rappresenta il suolo nudo
+plotRGB(p224r63_2011,r=3,g=2,b=4, stretch="Lin")
+#il suolo nudo in questo caso è giallo
+
+
+# multiframe 2x2
+par(mfrow=c(2,2))
+plotRGB(p224r63_2011,r=3,g=2,b=1, stretch="Lin")
+plotRGB(p224r63_2011,r=4,g=3,b=2, stretch="Lin")
+plotRGB(p224r63_2011,r=3,g=4,b=2, stretch="Lin")
+plotRGB(p224r63_2011,r=3,g=2,b=4, stretch="Lin")
+
+
+# salvare immagine come pdf tramite codice
+pdf("il_mio_primo_pdf_2.pdf")
+par(mfrow=c(2,2))
+plotRGB(p224r63_2011,r=3,g=2,b=1, stretch="Lin")
+plotRGB(p224r63_2011,r=4,g=3,b=2, stretch="Lin")
+plotRGB(p224r63_2011,r=3,g=4,b=2, stretch="Lin")
+plotRGB(p224r63_2011,r=3,g=2,b=4, stretch="Lin")
+dev.off() #per chiudere bene la funzione pdf()
+
+
+# salva come jpeg
+jpeg("il_mio_primo_jpeg_con_R_2.jpeg")
+par(mfrow=c(2,2))
+plotRGB(p224r63_2011, r=3, g=2, b=1, stretch="Lin")
+plotRGB(p224r63_2011, r=4, g=3, b=2, stretch="Lin")
+plotRGB(p224r63_2011, r=3, g=4, b=2, stretch="Lin")
+plotRGB(p224r63_2011, r=3, g=2, b=4, stretch="Lin")
+dev.off()
+
+
+# stretch non lineare
+#confronto tra 3 immagini
+par(mfrow=c(3,1))
+plotRGB(p224r63_2011, r=3, g=2, b=1, stretch="Lin") #immagine a colori naturali
+plotRGB(p224r63_2011, r=3, g=4, b=2, stretch="Lin") #falsi colori, NIR sul verde
+plotRGB(p224r63_2011, r=3, g=4, b=2, stretch="hist") #falsi colori, con stretch hist
+#le zone viola all'interno della foresta potrebbero proprio rapprsentare le zone più umide
+
+#con RGB non c'è la legenda perchè i colori derivano dalle riflettanze, non le decidiamo noi
 
 
 
