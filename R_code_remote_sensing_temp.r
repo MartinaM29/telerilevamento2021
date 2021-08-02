@@ -13,6 +13,7 @@ setwd("C:/lab_telerilevamento/")  # Windows
 
 #zona di studio Riserva di Parakana
 p224r63_2011 <- brick("p224r63_2011_masked.grd") #con brick si importano immagini dall'esterno, si carica l'intero blocco delle bande, le "" si usano per chiamare file fuori da R
+#masked indica che l'immagine è già stata ripulita da un po' di rumore
 # quindi il file "p224r63_2011" contiene tutte le bande Landsat
 #queste operazioni devono essere eseguite ogni volta che si apre R
 plot(p224r63_2011) #plot con tutte le bande, 7 grafici
@@ -127,6 +128,7 @@ plot(p224r63_2011$B4_sre, col=cln)
 # B6: infrarosso termico (infrarosso lontano)
 # B7: infrarosso medio (altro sensore per l'infrarosso medio)
 
+#le bande avranno dei valori per ogni pixel compresi fra 0 e 1, 0 per la banda che assorbe molto 1 per la banda che riflette molto
 
 ## schema RGB = ogni schermo ha uno schema fisso per mostrare i colori, chiamato appunto RGB
 # per vedere quindi un'immagine come se fosse a colori naturali, si monta R con la banda 3, G con la banda 2 e B con la banda 1 (schema 3,2,1)
@@ -188,6 +190,57 @@ plotRGB(p224r63_2011, r=3, g=4, b=2, stretch="hist") #falsi colori, con stretch 
 #le zone viola all'interno della foresta potrebbero proprio rapprsentare le zone più umide
 
 #con RGB non c'è la legenda perchè i colori derivano dalle riflettanze, non le decidiamo noi
+
+
+## set multitemporale
+# come è cambiata l'area nel corso degli anni sfruttando i dati Landsat e le funzioni appena usate
+# inserimento immagine 1988_masked
+p224r63_1988<-brick("p224r63_1988_masked.grd") #importazione dell'intera immagine
+p224r63_1988
+plot(p224r63_1988) #plot dell'intera immagine, con visualizzazionne delle singole bande
+
+plotRGB(p224r63_1988,r=3,g=2,b=1,stretch="Lin") #plot in colori naturali, stretch lineare
+plotRGB(p224r63_1988,r=4,g=3,b=2,stretch="Lin") #falsi colori, con la componente NIR nel rosso
+
+#multiframe 1988-2011 in falsi colori con componente NIR nel rosso
+#stretch lineare e non lineare
+par(mfrow=c(2,2))
+plotRGB(p224r63_1988,r=4,g=3,b=2,stretch="Lin")
+plotRGB(p224r63_2011,r=4,g=3,b=2,stretch="Lin")
+plotRGB(p224r63_1988,r=4,g=3,b=2,stretch="hist")
+plotRGB(p224r63_2011,r=4,g=3,b=2,stretch="hist")
+#1988:passaggio graduale tra componente naturale ed antropica
+#2011:soglia netta tra la foresta pluviale e l'impatto naturale
+
+# salva come pdf
+pdf("1988_Vs_2011_Lin_hist_2.pdf")
+par(mfrow=c(2,2))
+plotRGB(p224r63_1988,r=4,g=3,b=2,stretch="Lin")
+plotRGB(p224r63_2011,r=4,g=3,b=2,stretch="Lin")
+plotRGB(p224r63_1988,r=4,g=3,b=2,stretch="hist")
+plotRGB(p224r63_2011,r=4,g=3,b=2,stretch="hist")
+dev.off()
+
+# unione pdf
+pdf("unione_pdf.pdf")
+par(mfrow=c(2,2))
+plotRGB(p224r63_2011, r=3, g=2, b=1, stretch="Lin")
+plotRGB(p224r63_2011, r=4, g=3, b=2, stretch="Lin")
+plotRGB(p224r63_2011, r=3, g=4, b=2, stretch="Lin")
+plotRGB(p224r63_2011, r=3, g=2, b=4, stretch="Lin")
+par(mfrow=c(2,2))
+plotRGB(p224r63_1988, r=4, g=3, b=2, stretch="Lin")
+plotRGB(p224r63_2011, r=4, g=3, b=2, stretch="Lin")
+plotRGB(p224r63_1988, r=4, g=3, b=2, stretch="Hist")
+plotRGB(p224r63_2011, r=4, g=3, b=2, stretch="Hist")
+dev.off()
+# con il secondo par crea una seconda pagina di pdf
+
+
+
+
+
+
 
 
 
