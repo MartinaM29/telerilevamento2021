@@ -235,21 +235,3 @@ plotRGB(p224r63_1988, r=4, g=3, b=2, stretch="Hist")
 plotRGB(p224r63_2011, r=4, g=3, b=2, stretch="Hist")
 dev.off()
 # con il secondo par crea una seconda pagina di pdf
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
