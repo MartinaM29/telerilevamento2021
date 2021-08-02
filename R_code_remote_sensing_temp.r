@@ -3,8 +3,6 @@
 
 #install.packages("raster") #se ancora non si è installato il pacchetto
 library(raster) #COSA FA RASTER, il pacchetto sp, gestisce tutti i dati all'interno del softwer, in questo caso raster
-#install.packages("RStoolbox")
-library(RStoolbox)
 
 #setwd("~/lab/")#Linux
 setwd("C:/lab_telerilevamento/")  # Windows
