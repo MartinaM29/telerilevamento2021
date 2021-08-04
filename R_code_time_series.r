@@ -101,5 +101,3 @@ totmelt # per vedere anche i valori min e max di scioglimento
 
 
 
-
-
