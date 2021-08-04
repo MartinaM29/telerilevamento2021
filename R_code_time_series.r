@@ -6,13 +6,15 @@
 library(raster)
 # install.packages("rasterVis")
 library(rasterVis) #visualizzazione di dati raster
+# install.packages("knitr")
+library(knitr)
 
 ##c reazione cartella "greenland" all'interno della working directory "lab_telerilevamento"
 setwd ("C:/lab_telerilevamento/greenland") #windows
 # setwd("~/lab_telerilevamento/greenland") # Linux
 # setwd("/Users/name/Desktop/lab_telerilevamento/greenland") # Mac
 
-# lst = lans surface temperature (temperatura misurata al suolo)
+# lst = land surface temperature (temperatura misurata al suolo)
 
 # in questo caso non abbiamo un unico file ma 4 file separati e non si può usare brick
 # i file rappresentano la temperatura e derivano al programma Copernicus (https://land.copernicus.vgt.vito.be/PDF/portal/Application.html#Home)
@@ -47,7 +49,8 @@ import
 # traformare i singoli 4 file in uno unico (creare un unico pacchetto di file)
 # creazione di uno stack (importazione di un blocco di dati raster), funzione stack, all'interno del pacchetto raster
 TGr<-stack(import)
-plto(TGr) # in questo modo non importa più fare par()
+plot(TGr) # in questo modo non importa più fare par()
+TGr
 
 plotRGB(TGr,r=1, g=2, b=3, stretch="Lin") #1=2000, 2=2005, 3=2010
 #plot dei valori dei vari anni
@@ -57,8 +60,42 @@ plotRGB(TGr,r=2, g=3, b=4, stretch="Lin")
 plotRGB(TGr,r=2, g=3, b=4, stretch="hist")
 
 
+## levelplot
+levelplot(TGr)
+levelplot(TGr$lst_2000) # grafico media valori di temperatura
+# sommatoria pixel di ogni colonna per il numero di pixel si ha la media di ogni colonna
 
-### si può procedere ora all'elaborazione
+# cambio colorRampPalette (cambio colori grafico)
+cl<-colorRampPalette(c("blue","light blue","pink","red"))(100)
+levelplot(TGr,col.regions=cl)
+# levelplot da grafici più potenti rispetto al plot
+# arricchimento levelplot mediante l'uso dei suoi attributi
+levelplot(TGr,col.regions=cl,main="land surface temperature",names.attr=c("July_2000","July_2005","July_2010","July_2015"))
+# main = titolo
+# c() perchè sono 4 blocchi
+
+
+### utlizzo dei dati relativi allo scioglimento
+## creare una lista con questi secondi dati
+meltlist<-list.files(pattern="melt")
+meltlist
+melt<-lapply(meltlist,raster) 
+MG<-stack(melt) # MG = melt Greenland
+levelplot(MG$X1979annual_melt)
+MG
+
+cl<-colorRampPalette(c("white","green","yellow","red"))(100)
+levelplot(MG$X1979annual_melt,col.regions=cl)
+
+## sottrazione tra i livelli (sempre in bit)
+# più è alto questo valore, in questo caso, più è alto lo scioglimento
+totmelt<-(MG$X2007annual_melt-MG$X1979annual_melt)
+clm<-colorRampPalette(c("blue","white","red"))(100)
+levelplot(totmelt,col.regions=clm)
+totmelt # per vedere anche i valori min e max di scioglimento
+
+
+
 
 
 
