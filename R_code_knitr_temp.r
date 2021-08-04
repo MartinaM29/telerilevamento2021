@@ -12,7 +12,8 @@ setwd("C:/lab_telerilevamento/") # Windows
 # setwd("/Users/name/Desktop/lab/") # Mac
 
 
-
+## R_code_remote_sensing_temp file su cui si lavora.r
+#con Ctrl A selezionare tutto il testo e copiarlo su un file di testo
 
 
 
