@@ -56,12 +56,28 @@ plot(SOC_20$map)
 sun <- brick("sun.png")
 sun
 plotRGB(sun, 1, 2, 3, stretch="lin")
-sunc <- unsuperClass(sun, nClasses=20)
+sunc <- unsuperClass(sun, nClasses=3)
+# sunc <- unsuperClass(sun, nClasses=20)
 plot(sunc$map)
 
+# per sapere quanto è accurata l'immagine bisogna fare un controllo a posteriori
+# un problema delle immagine è il "noise", il rumre, che può derivare dalle ombre ad esempio, altri rumori sono le nuvole
+# ci sono 3 metodi per le nuvole:
+# 1 esistono degli strati chiamati mask, che si possono tranquillamente togliere, sono dei file a parte con i quali si possono fare delle sottrazioni
+# 2 lo si inserisce nella classificazione ma si dichiara quali zone sono nuvole
+# 3 usare un altro tipo di sensore (i sensori fin ora usati sono sensori passivi), per esempio con il segnale RADAR le nuvole vengono oltrepassate
 
 
+## classificazione del Grand Canyon
 
+GC<-brick("dolansprings_oli_2013088_canyon_lrg.jpg") # copiando ed incollando su Browser il nome dell'immagine si trova il sito di download e le relative caratteristiche
+plotRGB(GC, r=1, g=2, b=3, stretch="lin")
+plotRGB(GC, r=1, g=2, b=3, stretch="hist")
 
+GCc2<-unsuperClass(GC,nClasses=2)
+plot(GCc2$map)
+
+GCc4 <- unsuperClass(GC, nClasses=4)
+plot(GCc4$map)
 
 
