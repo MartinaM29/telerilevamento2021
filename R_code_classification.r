@@ -71,13 +71,52 @@ plot(sunc$map)
 ## classificazione del Grand Canyon
 
 GC<-brick("dolansprings_oli_2013088_canyon_lrg.jpg") # copiando ed incollando su Browser il nome dell'immagine si trova il sito di download e le relative caratteristiche
+par(mfrow=c(2,1)) # plot in RGB con stretch lineare e histogram
 plotRGB(GC, r=1, g=2, b=3, stretch="lin")
 plotRGB(GC, r=1, g=2, b=3, stretch="hist")
+# i pixel Landsat hanno risoluzione 30 m
 
-GCc2<-unsuperClass(GC,nClasses=2)
+GCc2<-unsuperClass(GC,nClasses=2) # classificazione con due classi
 plot(GCc2$map)
+GCc2
+#unsuperClass results
+#
+#*************** Map ******************
+#$map
+#class      : RasterLayer 
+#dimensions : 6222, 9334, 58076148  (nrow, ncol, ncell)
+#resolution : 1, 1  (x, y)
+#extent     : 0, 9334, 0, 6222  (xmin, xmax, ymin, ymax)
+#crs        : NA 
+#source     : r_tmp_2021-08-20_084832_7760_43713.grd 
+#names      : layer 
+#values     : 1, 2  (min, max) -> classi 1 e classe 2
 
-GCc4 <- unsuperClass(GC, nClasses=4)
+
+GCc4 <- unsuperClass(GC, nClasses=4) # classificazione con 4 classi
 plot(GCc4$map)
+GCc4
+
+##unsuperClass results
+#
+#*************** Map ******************
+#$map
+#class      : RasterLayer 
+#dimensions : 6222, 9334, 58076148  (nrow, ncol, ncell)
+#resolution : 1, 1  (x, y)
+#extent     : 0, 9334, 0, 6222  (xmin, xmax, ymin, ymax)
+#crs        : NA 
+#source     : r_tmp_2021-08-20_084949_7760_38156.grd 
+#names      : layer 
+#values     : 1, 4  (min, max) -> classi 1,2,3 e 4
+
+par(mfrow=c(2,1))
+plotRGB(GC, r=1, g=2, b=3, stretch="lin")
+plot(GCc4$map)
+
+
+
+
+
 
 
