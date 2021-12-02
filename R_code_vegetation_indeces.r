@@ -70,9 +70,39 @@ plot(DVI2,col=cl,main="DVI in time 2")
 difDVI<-DVI1-DVI2 #warning:Raster objects have different extents
 cld<-colorRampPalette(c('blue','white','red'))(100)
 plot(difDVI,col=cld)
-#identifichiamo in che aree c'è stata sofferenza (nel nostro cosa deforestazione)
+# identifichiamo in che aree c'è stata sofferenza (nel nostro cosa deforestazione)
+# dice quali sono i punti in cui c'è stata una sofferenza nella vegetazione nel tempo
 
+## calcolo NDVI
+# l'NDVI nasce per poter paragonare immagini con risoluzione radiometrica differente
+# a questo punto il range dei valori che l'NDVI può assumere è -1;1
+# NB: alcuni software ragionano in maniera sequenziale, quindi inserire sempre le parentesi
+# NDVI<-(NIR-RED)/(NIR+RED)
+NDVI1<- (defor1$defor1.1-defor1$defor1.2)/(defor1$defor1.1+defor1$defor1.2)
+# NDVI1<- DVI1/(defor1$defor1.1+defor1$defor1.2)
+plot(NDVI1, col=cl, main="NDVI in time 1")
 
+# sul pacchetto RStoolbox sono presenti diverse funzioni, ad esempio spectral indices, che calcola diversi indici come NDVI o SAVI (che si usa con diversi tipi di suolo)
+# argomento = indices
+
+NDVI2<-(defor2$defor2.1-defor2$defor2.2)/(defor2$defor2.1+defor2$defor2.2)
+# NDVI2<-DVI2/(defor2$defor2.1+defor2$defor2.2)
+par(mfrow=c(2,1))
+plot(NDVI1, col=cl, main="NDVI in time 1")
+plot(NDVI2, col=cl, main="NDVI in time 2")
+
+difNDVI<-NDVI1-NDVI2
+plot(difNDVI,col=cld)
+
+## test spectral indices
+# RStoolbox::spectralIndices
+VI1<-spectralIndices(defor1,green=3,red=2,nir=1)
+plot(VI1,col=cl)
+
+#NDWI = indice relativo all'acqua
+
+VI2<-spectralIndices(defor2,green=3,red=2,nir=1)
+plot(VI2,col=cl)
 
 
 
