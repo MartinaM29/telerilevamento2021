@@ -6,6 +6,9 @@ library(raster) # require(raster), funzione require fa la sessa cosa di library
 library(RStoolbox) # for vegetation indices calculation
 # install.packages("rasterdiv")
 library(rasterdiv) # for the worldwise NDVI
+# raster diversity
+# si può trovare un dataset gratuito derivato direttamente da copernicus
+# l'input data-set è NDVI
 # install.packages("rasterVis")
 library(rasterVis)
 
@@ -98,12 +101,26 @@ plot(difNDVI,col=cld)
 # RStoolbox::spectralIndices
 VI1<-spectralIndices(defor1,green=3,red=2,nir=1)
 plot(VI1,col=cl)
-
-#NDWI = indice relativo all'acqua
-
 VI2<-spectralIndices(defor2,green=3,red=2,nir=1)
 plot(VI2,col=cl)
 
+# NDWI = indice relativo all'acqua
 
+# NB: la varianza è, in statistica, la variabilità dei dati
+# i disastri naturali aumentano quindi la varianza dei pixel
+## copNDVI è un dataset presente in rasterdiv (worldwise NDVI)
+plot(copNDVI)
+# non ci interessano i valori che vanno a rappresentare l'acqua e quindi li togliamo
+# funzione reclassify, trasformandoli in non valore (NA)
+copNDVI<-raster::reclassify(copNDVI, cbind(253:255,NA))
+# :: lega la funzione, per capire da dove viene la funzione
+# i valori da 253 a 255 sono quelli rappresentativi dell'acqua
 
+## levelplot è all'interno del pacchetto rasterVis
+levelplot(copNDVI)
+# dal 1999 al 2017
+# i valori più alti infatti sono relativi alla foresta amazzonica, e di tutte le grandi foreste mondiali
+# i valori bassi rappresentano i deserti o le grandi distese di nevi
+# si può esare levelplot per paragonare l'NDVI della stessa zona nel tempo
+# NDVI scaricabile da Copernicus
 
