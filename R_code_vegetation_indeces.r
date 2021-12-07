@@ -124,3 +124,10 @@ levelplot(copNDVI)
 # si può esare levelplot per paragonare l'NDVI della stessa zona nel tempo
 # NDVI scaricabile da Copernicus
 
+# robisco = enzima che cattura la CO2 trasformandola in zucchero
+# anni '80 crisi delle piogge acide, le conifere che hanno le foglie ad ago sono già acide, e questa forte acidità ha creato gravi malattie alle piante
+
+
+
+
+
