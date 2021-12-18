@@ -5,7 +5,7 @@ library(raster)
 library(RStoolbox)
 
 # setwd("~/lab/") # Linux
-setwd("C:/lab/") # Windows
+setwd("C:/lab_telerilevamento/") # Windows
 # setwd("/Users/name/Desktop/lab/") # Mac
 
 ## funzioni per caricare le immagini
@@ -71,10 +71,39 @@ plot(ndvisd15, col=clsd)
 # utilizzo delle principal component -> analisi multivariata
 # funzione rasterPCA, nel pacchetto RStoolbox
 sentpca<-rasterPCA(sentinel)
+sentpca
+# $call
+# rasterPCA(img = sentinel)
+#
+# $model
+# Call:
+# princomp(cor = spca, covmat = covMat[[1]])
+#
+# Standard deviations:
+#   Comp.1   Comp.2   Comp.3   Comp.4 
+# 77.33628 53.51455  5.76560  0.00000 
+#
+#  4  variables and  633612 observations.
+#
+# $map
+# class      : RasterBrick 
+# dimensions : 794, 798, 633612, 4  (nrow, ncol, ncell, nlayers)
+# resolution : 1, 1  (x, y)
+# extent     : 0, 798, 0, 794  (xmin, xmax, ymin, ymax)
+# crs        : NA 
+# source     : memory
+# names      :       PC1,       PC2,       PC3,       PC4 
+# min values : -227.1124, -106.4863,  -74.6048,    0.0000 
+# max values : 133.48720, 155.87991,  51.56744,   0.00000 
+#
+#
+# attr(,"class")
+# [1] "rasterPCA" "RStoolbox"
+
 plot(sentpca$map) # ricorda che il 4 livello non ha senso
 summary(sentpca$map) # per vedere quanta variabilità spiegano le singole componenti
 # è ovvio che la prima componente spieghi di più perchè è proprio quella nell'asse con più variabilità, gli altri assi sono ortogonali ad esso
-#                 [,1]        [,2]        [,3] [,4]
+#                 [,1]        [,2]        [,3] [,4] -> numero componente
 # Min.    -227.112386 -106.486268 -74.6047951    0
 # 1st Qu.  -46.986159  -38.491732  -2.8424694    0
 # Median    -3.031515   -7.414764   0.4003749    0
@@ -82,9 +111,15 @@ summary(sentpca$map) # per vedere quanta variabilità spiegano le singole compon
 # Max.     133.487197  155.879910  51.5674399    0
 # NA's       0.000000    0.000000   0.0000000    0
 
+## misurazione variabilità attraverso la funzione focal
+# sulla prima componente
+pc1<-sentpca$map$PC1
+pc1_15<-focal(pc1,w=matrix(1/225,nrow=15,ncol=15),fun=sd)
+plot(pc1_15, col=clsd)
 
-
-
+## con la funzione source, si può richiamare un pezzo di codice già creato
+# prima si deve scaricare il file come link da internet
+source("source_test_lezione.r")
 
 
 
