@@ -3,6 +3,10 @@
 
 library(raster)
 library(RStoolbox)
+library(ggplot2)
+library(gridExtra) # mette insieme tanti plot di ggplot (con la funzione grid.arrange)
+# install.packages("viridis")
+library(viridis) # serve per i colori
 
 # setwd("~/lab/") # Linux
 setwd("C:/lab_telerilevamento/") # Windows
@@ -120,6 +124,46 @@ plot(pc1_15, col=clsd)
 ## con la funzione source, si può richiamare un pezzo di codice già creato
 # prima si deve scaricare il file come link da internet
 source("source_test_lezione.r")
+# alta sd alte variazioni geomorfologiche
+# secondo esempio con source
+source("source_ggplot.r")
+## analisi dello script "source_ggplot.r"
+ggplot() + # creazione di una finestra vuota, il + aggiunge un altro blocco a ggplot
+geom_raster(pc1_15,mapping=aes(x=x,y=y,fill=layer)) # creazione del blocco geometria (es: geom_point, geom_line), nel nostro caso stiamo usando dei pixel, quindi un raster
+# aes = estetiche, quindi che cosa si plotta, tramite la funzione mapping
+# questo metodo è importantissimo per mappare le discontinuità geografiche
+# a livello geologico serve ad individuare qualsiasi variabilità geomorfologica
+# a livello ecologico serve ad individuare qualsiasi variabilità ecologica (es. ecotoni)
+
+## viridis
+# permette di creare colori che siano visibili a tutti
+# viridis è di default, poi propone 5 alternative (inferno, plasma, cividis, magma, mako, rocket)
+# la funzione scale_fill_viridis nel pacchetto viridis per la scelta
+
+p1<-ggplot() + 
+geom_raster(pc1_15,mapping=aes(x=x,y=y,fill=layer)) +
+scale_fill_viridis() + # default
+ggtitle("deviazione standard con utilizzo di viridis") # ggtitle = per inserire titolo
+# cambio legenda
+p2<-ggplot() + 
+geom_raster(pc1_15,mapping=aes(x=x,y=y,fill=layer)) +
+scale_fill_viridis(option="magma") + 
+ggtitle("deviazione standard con utilizzo di magma") 
+# tutto ciò che ha un'alta deviazione standard si vede molto bene
+# cambio legenda
+p3<-ggplot() + 
+geom_raster(pc1_15,mapping=aes(x=x,y=y,fill=layer)) +
+scale_fill_viridis(option="inferno") + 
+ggtitle("deviazione standard con utilizzo di inferno")
+# cambio legenda
+p4<-ggplot() + 
+geom_raster(pc1_15,mapping=aes(x=x,y=y,fill=layer)) +
+scale_fill_viridis(option="turbo") + # questa però i daltonici non la vedono
+ggtitle("deviazione standard con utilizzo di turbo")
+
+# unione con grid.arrange
+grid.arrange(p1,p2,p3,p4,nrow=2,ncol=2)
+
 
 
 
