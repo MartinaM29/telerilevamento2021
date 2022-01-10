@@ -384,7 +384,8 @@ totmelt # per vedere anche i valori min e max di scioglimento
 #install.packages("raster")
 library(raster)
 #install.packages("ncdf4")
-library(ncdf4)
+library(ncdf4) # all'interno del pacchetto CRAN, possono essere aperti e letti facilmente dei datasets, permette anche la compressione dei file
+# CRAN è una rete di server in tutto il mondo che memorizza le versioni aggiornate di codici e documentazioni di R
 
 #setwd("~/lab_telerilevamento/") # Linux
 setwd("C:/lab_telerilevamento/") # Windows
