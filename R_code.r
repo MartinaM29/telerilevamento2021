@@ -92,7 +92,8 @@ levelplot(diff2215,col.regions=cl,main='differenza in SWI tra il 2022 e il 2015'
 ### guarda l'altro comando per il plot
 ### fare la differenza
 
-LST22<-raster("c_gls_LST_202201191700_GLOBE_GEO_V2.0.1.nc") # da una stringa!!!
-plot(LST22,col=cl,main='LST_2022') # ha dei valori strani
-LST20<-("c_gls_LST_202001060500_GLOBE_GEO_V1.2.1.nc")
+LST22<-raster("c_gls_LST_202201191700_GLOBE_GEO_V2.0.1.nc") 
+plot(LST22,col=cl,main='LST_2022') 
+LST20<-raster("c_gls_LST_202001060500_GLOBE_GEO_V1.2.1.nc")
 plot(LST20,col=cl,main='LST_2020')
+# i due plot danno scale diverse, la più sensata sembra quella relativa al 2020
