@@ -114,3 +114,30 @@ par(mfrow=c(2,1))
 plot(diffSWI2215,col=cl,main='differenza in SWI tra il 2022 e il 2015')
 plot(diffLST2218,col=cl,main='differenza in SWI tra il 2022 e il 2018')
 # non si capisce perchè una è europea e l'altra globale
+
+### inserimento immagini
+## fiume americano
+river17<-brick("lakepowell_oli_2017244_lrg.jpg")
+river21<-brick("lakepowell_oli_2021239_lrg.jpg")
+par(mfrow=c(2,1))
+plotRGB(river17,r=1,g=2,b=3,stretch="lin", main='2017')
+plotRGB(river21,r=1,g=2,b=3,stretch="lin",main='2021')
+
+# laguna di Venezia
+ven00<-brick("venice_etm_2000172_lrg_copia.jpg")
+ven13<-brick("venice_oli_2013247_lrg_copia.jpg")
+ven21<-brick("venice_msi_2021308_lrg.jpg")
+par(mfrow=c(2,2))
+plotRGB(ven00,r=1,g=2,b=3,stretch="lin") # main='2000'
+plotRGB(ven13,r=1,g=2,b=3,stretch="lin") # main='2013'
+plotRGB(ven21,r=1,g=2,b=3,stretch="lin") # main='2021'
+
+
+
+
+
+
+
+
+
+
