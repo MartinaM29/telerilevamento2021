@@ -4,6 +4,10 @@ library("raster")
 library("rasterVis")
 library("knitr")
 library("ncdf4")
+library("RStoolbox")
+library("gridExtra")
+library("ggplot2")
+library("rasterdiv") # per NDVI
 # install.packages("XML") # per aprire file .xml, da tutorial
 # library("XML") # comunque non apre il file prova
 
@@ -122,6 +126,74 @@ river21<-brick("lakepowell_oli_2021239_lrg.jpg")
 par(mfrow=c(2,1))
 plotRGB(river17,r=1,g=2,b=3,stretch="lin", main='2017')
 plotRGB(river21,r=1,g=2,b=3,stretch="lin",main='2021')
+
+# PCA
+river17_PCA<-rasterPCA(river17)
+summary(river17_PCA)
+#       Length   Class       Mode
+# call         2 -none-      call
+# model        7 princomp    list
+# map   14990550 RasterBrick S4  
+summary(river17_PCA$model)
+Importance of components:
+#                             Comp.1     Comp.2      Comp.3
+# Standard deviation     108.0645372 23.2573965 4.964194970
+# Proportion of Variance   0.9538081  0.0441791 0.002012761
+# Cumulative Proportion    0.9538081  0.9979872 1.000000000
+plot(river17_PCA$map)
+river17_PCA
+# $call
+# rasterPCA(img = river17)
+#
+# $model
+# Call:
+# princomp(cor = spca, covmat = covMat[[1]])
+#
+# Standard deviations:
+#     Comp.1     Comp.2     Comp.3 
+# 108.064537  23.257397   4.964195 
+#
+#  3  variables and  4996850 observations.
+#
+# $map
+# class      : RasterBrick 
+# dimensions : 1825, 2738, 4996850, 3  (nrow, ncol, ncell, nlayers)
+# resolution : 1, 1  (x, y)
+# extent     : 0, 2738, 0, 1825  (xmin, xmax, ymin, ymax)
+# crs        : NA 
+# source     : memory
+# names      :        PC1,        PC2,        PC3 
+# min values : -225.67711,  -93.59984,  -52.14022 
+# max values :  186.15028,   96.89894,   31.99906 
+#
+#
+# attr(,"class")
+# [1] "rasterPCA" "RStoolbox"
+plotRGB(river17_PCA$map,r=1,b=2,g=3,stretch="lin")
+plot(river17_PCA$map$PC1,river17_PCA$map$PC2)
+
+## classificazione
+class_17<-unsuperClass(river17,nClasses=20) # vedi meglio per il numero di classi
+plot(class_17$map)
+class_17
+# unsuperClass results
+#
+# *************** Map ******************
+# $map
+# class      : RasterLayer 
+# dimensions : 1825, 2738, 4996850  (nrow, ncol, ncell)
+# resolution : 1, 1  (x, y)
+# extent     : 0, 2738, 0, 1825  (xmin, xmax, ymin, ymax)
+# crs        : NA 
+# source     : memory
+# names      : layer 
+# values     : 1, 20  (min, max)
+
+## ggplot
+r17<-ggRGB(river17,1,2,3,stretch="lin")
+r21<-ggRGB(river21,1,2,3,stretch="lin")
+grid.arrange(r17,r21,nrow=2)
+
 
 # laguna di Venezia
 ven00<-brick("venice_etm_2000172_lrg_copia.jpg")
