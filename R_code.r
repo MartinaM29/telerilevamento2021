@@ -8,6 +8,7 @@ library("RStoolbox")
 library("gridExtra")
 library("ggplot2")
 library("rasterdiv") # per NDVI
+# library("rgdal")
 # install.packages("XML") # per aprire file .xml, da tutorial
 # library("XML") # comunque non apre il file prova
 
@@ -193,6 +194,26 @@ class_17
 r17<-ggRGB(river17,1,2,3,stretch="lin")
 r21<-ggRGB(river21,1,2,3,stretch="lin")
 grid.arrange(r17,r21,nrow=2)
+
+## NDWI
+# NDWI = (r_green - r_nir) / (r_nir + r_green) -> guarda perchè green e spiegalo
+river17
+# class      : RasterBrick 
+# dimensions : 1825, 2738, 4996850, 3  (nrow, ncol, ncell, nlayers)
+# resolution : 1, 1  (x, y)
+# extent     : 0, 2738, 0, 1825  (xmin, xmax, ymin, ymax)
+# crs        : NA 
+# source     : lakepowell_oli_2017244_lrg.jpg 
+# names      : lakepowell_oli_2017244_lrg.1, lakepowell_oli_2017244_lrg.2, lakepowell_oli_2017244_lrg.3 
+# min values :                            0,                            0,                            0 
+# max values :                          255,                          255,                          255 
+
+# BANDE
+# B1= NIR, B2 = red, B3 = green
+NDWI17=(river17$lakepowell_oli_2017244_lrg.3-river17$lakepowell_oli_2017244_lrg.1)/(river17$lakepowell_oli_2017244_lrg.1+river17$lakepowell_oli_2017244_lrg.3)
+plot(NDWI17)
+# descrivi il risultato
+
 
 
 # laguna di Venezia
