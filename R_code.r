@@ -17,6 +17,210 @@ setwd("C:/lab_telerilevamento/esame")
 
 ### cerca info su immagini caricate
 
+### inserimento immagini
+## lago americano
+river00<-brick("powell_ast_2000142_lrg.jpg")
+river06<-brick("powell_ast_2006126_lrg.jpg")
+river17<-brick("lakepowell_oli_2017244_lrg.jpg")
+river21<-brick("lakepowell_oli_2021239_lrg.jpg")
+par(mfrow=c(2,2))
+plotRGB(river00,r=1,g=2,b=3,stretch="lin")
+plotRGB(river06,r=1,g=2,b=3,stretch="lin")
+plotRGB(river17,r=1,g=2,b=3,stretch="lin") 
+plotRGB(river21,r=1,g=2,b=3,stretch="lin")
+
+# list<-list.files(pattern="powell")
+# import<-lapply(list,raster)
+# import
+# RIVER<-stack(import)
+# levelplot(RIVER,main='Lago Powell',names.attr=c("2000","2006","2017","2021")) # col.regions=cl
+# le 4 immagini hanno estensione diversa
+
+## classificazione
+set.seed(2)
+class_00<-unsuperClass(river00,nClasses=2)
+class_06<-unsuperClass(river06,nClasses=2)
+class_17<-unsuperClass(river17,nClasses=2) # vedi meglio per il numero di classi
+class_21<-unsuperClass(river21,nClasses=2)
+par(mfrow=c(2,2))
+plot(class_00$map,main='2000')
+plot(class_06$map,main='2006')
+plot(class_17$map,main='2017')
+plot(class_21$map,main='2021')
+# classe1= roccia
+# classe2= acqua
+# i valori intermedi non hanno senso, quelli reali sono 1 e 2
+class_17
+# unsuperClass results
+#
+# *************** Map ******************
+# $map
+# class      : RasterLayer 
+# dimensions : 1825, 2738, 4996850  (nrow, ncol, ncell)
+# resolution : 1, 1  (x, y)
+# extent     : 0, 2738, 0, 1825  (xmin, xmax, ymin, ymax)
+# crs        : NA 
+# source     : memory
+# names      : layer 
+# values     : 1, 20  (min, max)
+
+## NDWI
+# NDWI = (r_green - r_nir) / (r_nir + r_green) -> guarda perchè green e spiegalo
+river17
+# class      : RasterBrick 
+# dimensions : 1825, 2738, 4996850, 3  (nrow, ncol, ncell, nlayers)
+# resolution : 1, 1  (x, y)
+# extent     : 0, 2738, 0, 1825  (xmin, xmax, ymin, ymax)
+# crs        : NA 
+# source     : lakepowell_oli_2017244_lrg.jpg 
+# names      : lakepowell_oli_2017244_lrg.1, lakepowell_oli_2017244_lrg.2, lakepowell_oli_2017244_lrg.3 
+# min values :                            0,                            0,                            0 
+# max values :                          255,                          255,                          255 
+
+# BANDE
+# B1= NIR, B2 = red, B3 = green
+NDWI17=(river17$lakepowell_oli_2017244_lrg.3-river17$lakepowell_oli_2017244_lrg.1)/(river17$lakepowell_oli_2017244_lrg.1+river17$lakepowell_oli_2017244_lrg.3)
+plot(NDWI17)
+# descrivi il risultato
+
+
+## PCA
+river17_PCA<-rasterPCA(river17)
+summary(river17_PCA)
+#       Length   Class       Mode
+# call         2 -none-      call
+# model        7 princomp    list
+# map   14990550 RasterBrick S4  
+summary(river17_PCA$model) # fa vedere la variabilità delle singole componenti
+Importance of components:
+#                             Comp.1     Comp.2      Comp.3
+# Standard deviation     108.0645372 23.2573965 4.964194970
+# Proportion of Variance   0.9538081  0.0441791 0.002012761
+# Cumulative Proportion    0.9538081  0.9979872 1.000000000
+plot(river17_PCA$map)
+river17_PCA
+# $call
+# rasterPCA(img = river17)
+#
+# $model
+# Call:
+# princomp(cor = spca, covmat = covMat[[1]])
+#
+# Standard deviations:
+#     Comp.1     Comp.2     Comp.3 
+# 108.064537  23.257397   4.964195 
+#
+#  3  variables and  4996850 observations.
+#
+# $map
+# class      : RasterBrick 
+# dimensions : 1825, 2738, 4996850, 3  (nrow, ncol, ncell, nlayers)
+# resolution : 1, 1  (x, y)
+# extent     : 0, 2738, 0, 1825  (xmin, xmax, ymin, ymax)
+# crs        : NA 
+# source     : memory
+# names      :        PC1,        PC2,        PC3 
+# min values : -225.67711,  -93.59984,  -52.14022 
+# max values :  186.15028,   96.89894,   31.99906 
+#
+#
+# attr(,"class")
+# [1] "rasterPCA" "RStoolbox"
+plotRGB(river17_PCA$map,r=1,b=2,g=3,stretch="lin")
+plot(river17_PCA$map$PC1,river17_PCA$map$PC2)
+
+
+
+## frequenza
+freq00<-freq(class_00$map)
+freq00
+# value   count
+# [1,]     1 4881693
+# [2,]     2 1118307
+freq06<-freq(class_06$map)
+freq06
+#     value   count
+# [1,]     1 5191304
+# [2,]     2  808696
+freq17<-freq(class_17$map)
+freq17
+# value   count
+# [1,]     1 3975656
+# [2,]     2 1021194
+freq21<-freq(class_21$map)
+freq21
+#      value   count
+# [1,]     1 4283465
+# [2,]     2  713385
+
+# proporzione
+sum00<-4881693+1118307
+sum06<-5191304+808696
+sum17<-3975656+1021194
+sum21<-4283465+713385
+
+prop00<-freq00/sum00
+prop00
+#             value     count
+# [1,] 1.666667e-07 0.8136155
+# [2,] 3.333333e-07 0.1863845
+prop06<-freq06/sum06
+prop06
+#             value     count
+# [1,] 1.666667e-07 0.8652173
+# [2,] 3.333333e-07 0.1347827
+prop17<-freq17/sum17
+prop17
+#             value     count
+# [1,] 2.001261e-07 0.7956324
+# [2,] 4.002522e-07 0.2043676
+prop21<-freq21/sum21
+prop21
+#            value     count
+# [1,] 2.001261e-07 0.8572331
+# [2,] 4.002522e-07 0.1427669
+
+## creazione di un dataframe
+area<-c("Rocce","Acqua")
+p2000<-c(81,18)
+p2006<-c(86,13)
+p2017<-c(79,20)
+p2021<-c(85,14)
+perc<-data.frame(area,p2000,p2006,p2017,p2021)
+perc
+#    area p2000 p2006 p2017 p2021
+# 1 Rocce    81    86    79    85
+# 2 Acqua    18    13    20    14
+
+## grafico
+p1<-ggplot(perc,aes(x=area,y=p2000,color=area))+geom_bar(stat="identity",fill="white")
+p2<-ggplot(perc,aes(x=area,y=p2006,color=area))+geom_bar(stat="identity",fill="white")
+p3<-ggplot(perc,aes(x=area,y=p2017,color=area))+geom_bar(stat="identity",fill="white")
+p4<-ggplot(perc,aes(x=area,y=p2021,color=area))+geom_bar(stat="identity",fill="white")
+grid.arrange(p1,p2,p3,p4,nrow=2)
+
+## ggplot
+r17<-ggRGB(river17,1,2,3,stretch="lin")
+r21<-ggRGB(river21,1,2,3,stretch="lin")
+grid.arrange(r17,r21,nrow=2)
+
+
+## variabilità con la moving window
+# con NDWI
+# la variabilità si può spiegare anche con la PCA
+ndwisd17<-focal(NDWI17,w=matrix(1/9,nrow=3,ncol=3),fun=sd)
+ndwisd17 # la sd è più bassa nella roccia nuda
+plot(ndwisd17) # non fa vedere molto
+# moving window con la PCA
+pca1<-river17_PCA$map$PC1
+pca17<-focal(pca1,w=matrix(1/9,nrow=3,ncol=3),fun=sd)
+plot(pca17) # alta sd alte variazioni geomorfologiche
+ggplot()+geom_raster(pca17,mapping=aes(x=x,y=y,fill=layer))+scale_fill_viridis("inferno")+ggtitle("deviazione standard 2017")
+#scale_fill_viridis(option="INSERIRE TIPO COLORE")
+
+
+
+
 WB_EU20<-brick("g2_BIOPAR_WB-QUAL_QL_202006210000_EURO_PROBAV_V2.0.1.png") 
 WB_EU20 # dice che ha 4 bande
 # class      : RasterBrick 
@@ -121,195 +325,6 @@ plot(diffSWI2215,col=cl,main='differenza in SWI tra il 2022 e il 2015')
 plot(diffLST2218,col=cl,main='differenza in SWI tra il 2022 e il 2018')
 # non si capisce perchè una è europea e l'altra globale
 
-### inserimento immagini
-## fiume americano
-river17<-brick("lakepowell_oli_2017244_lrg.jpg")
-river21<-brick("lakepowell_oli_2021239_lrg.jpg")
-par(mfrow=c(2,1))
-plotRGB(river17,r=1,g=2,b=3,stretch="lin", main='2017')
-plotRGB(river21,r=1,g=2,b=3,stretch="lin",main='2021')
-
-river00<-brick("powell_ast_2000142_lrg.jpg")
-river06<-brick("powell_ast_2006126_lrg.jpg")
-
-# PCA
-river17_PCA<-rasterPCA(river17)
-summary(river17_PCA)
-#       Length   Class       Mode
-# call         2 -none-      call
-# model        7 princomp    list
-# map   14990550 RasterBrick S4  
-summary(river17_PCA$model) # fa vedere la variabilità delle singole componenti
-Importance of components:
-#                             Comp.1     Comp.2      Comp.3
-# Standard deviation     108.0645372 23.2573965 4.964194970
-# Proportion of Variance   0.9538081  0.0441791 0.002012761
-# Cumulative Proportion    0.9538081  0.9979872 1.000000000
-plot(river17_PCA$map)
-river17_PCA
-# $call
-# rasterPCA(img = river17)
-#
-# $model
-# Call:
-# princomp(cor = spca, covmat = covMat[[1]])
-#
-# Standard deviations:
-#     Comp.1     Comp.2     Comp.3 
-# 108.064537  23.257397   4.964195 
-#
-#  3  variables and  4996850 observations.
-#
-# $map
-# class      : RasterBrick 
-# dimensions : 1825, 2738, 4996850, 3  (nrow, ncol, ncell, nlayers)
-# resolution : 1, 1  (x, y)
-# extent     : 0, 2738, 0, 1825  (xmin, xmax, ymin, ymax)
-# crs        : NA 
-# source     : memory
-# names      :        PC1,        PC2,        PC3 
-# min values : -225.67711,  -93.59984,  -52.14022 
-# max values :  186.15028,   96.89894,   31.99906 
-#
-#
-# attr(,"class")
-# [1] "rasterPCA" "RStoolbox"
-plotRGB(river17_PCA$map,r=1,b=2,g=3,stretch="lin")
-plot(river17_PCA$map$PC1,river17_PCA$map$PC2)
-
-## classificazione
-set.seed(2)
-class_17<-unsuperClass(river17,nClasses=2) # vedi meglio per il numero di classi
-plot(class_17$map) # i valori intermedi non hanno senso, quelli reali sono 1 e 2
-class_17
-# unsuperClass results
-#
-# *************** Map ******************
-# $map
-# class      : RasterLayer 
-# dimensions : 1825, 2738, 4996850  (nrow, ncol, ncell)
-# resolution : 1, 1  (x, y)
-# extent     : 0, 2738, 0, 1825  (xmin, xmax, ymin, ymax)
-# crs        : NA 
-# source     : memory
-# names      : layer 
-# values     : 1, 20  (min, max)
-
-class_21<-unsuperClass(river21,nClasses=2)
-class_00<-unsuperClass(river00,nClasses=2)
-class_06<-unsuperClass(river06,nClasses=2)
-par(mfrow=c(2,2))
-plot(class_00$map,main='2000')
-plot(class_06$map,main='2006')
-plot(class_17$map,main='2017')
-plot(class_21$map,main='2021')
-# classe1= roccia
-# classe2= acqua
-
-## frequenza
-freq00<-freq(class_00$map)
-freq00
-# value   count
-# [1,]     1 4881693
-# [2,]     2 1118307
-freq06<-freq(class_06$map)
-freq06
-#     value   count
-# [1,]     1 5191304
-# [2,]     2  808696
-freq17<-freq(class_17$map)
-freq17
-# value   count
-# [1,]     1 3975656
-# [2,]     2 1021194
-freq21<-freq(class_21$map)
-freq21
-#      value   count
-# [1,]     1 4283465
-# [2,]     2  713385
-
-# proporzione
-sum00<-4881693+1118307
-sum06<-5191304+808696
-sum17<-3975656+1021194
-sum21<-4283465+713385
-
-prop00<-freq00/sum00
-prop00
-#             value     count
-# [1,] 1.666667e-07 0.8136155
-# [2,] 3.333333e-07 0.1863845
-prop06<-freq06/sum06
-prop06
-#             value     count
-# [1,] 1.666667e-07 0.8652173
-# [2,] 3.333333e-07 0.1347827
-prop17<-freq17/sum17
-prop17
-#             value     count
-# [1,] 2.001261e-07 0.7956324
-# [2,] 4.002522e-07 0.2043676
-prop21<-freq21/sum21
-prop21
-#            value     count
-# [1,] 2.001261e-07 0.8572331
-# [2,] 4.002522e-07 0.1427669
-
-## creazione di un dataframe
-area<-c("Rocce","Acqua")
-p2000<-c(81,18)
-p2006<-c(86,13)
-p2017<-c(79,20)
-p2021<-c(85,14)
-perc<-data.frame(area,p2000,p2006,p2017,p2021)
-perc
-#    area p2000 p2006 p2017 p2021
-# 1 Rocce    81    86    79    85
-# 2 Acqua    18    13    20    14
-
-## grafico
-p1<-ggplot(perc,aes(x=area,y=p2000,color=area))+geom_bar(stat="identity",fill="white")
-p2<-ggplot(perc,aes(x=area,y=p2006,color=area))+geom_bar(stat="identity",fill="white")
-p3<-ggplot(perc,aes(x=area,y=p2017,color=area))+geom_bar(stat="identity",fill="white")
-p4<-ggplot(perc,aes(x=area,y=p2021,color=area))+geom_bar(stat="identity",fill="white")
-grid.arrange(p1,p2,p3,p4,nrow=2)
-
-## ggplot
-r17<-ggRGB(river17,1,2,3,stretch="lin")
-r21<-ggRGB(river21,1,2,3,stretch="lin")
-grid.arrange(r17,r21,nrow=2)
-
-## NDWI
-# NDWI = (r_green - r_nir) / (r_nir + r_green) -> guarda perchè green e spiegalo
-river17
-# class      : RasterBrick 
-# dimensions : 1825, 2738, 4996850, 3  (nrow, ncol, ncell, nlayers)
-# resolution : 1, 1  (x, y)
-# extent     : 0, 2738, 0, 1825  (xmin, xmax, ymin, ymax)
-# crs        : NA 
-# source     : lakepowell_oli_2017244_lrg.jpg 
-# names      : lakepowell_oli_2017244_lrg.1, lakepowell_oli_2017244_lrg.2, lakepowell_oli_2017244_lrg.3 
-# min values :                            0,                            0,                            0 
-# max values :                          255,                          255,                          255 
-
-# BANDE
-# B1= NIR, B2 = red, B3 = green
-NDWI17=(river17$lakepowell_oli_2017244_lrg.3-river17$lakepowell_oli_2017244_lrg.1)/(river17$lakepowell_oli_2017244_lrg.1+river17$lakepowell_oli_2017244_lrg.3)
-plot(NDWI17)
-# descrivi il risultato
-
-## variabilità con la moving window
-# con NDWI
-# la variabilità si può spiegare anche con la PCA
-ndwisd17<-focal(NDWI17,w=matrix(1/9,nrow=3,ncol=3),fun=sd)
-ndwisd17 # la sd è più bassa nella roccia nuda
-plot(ndwisd17) # non fa vedere molto
-# moving window con la PCA
-pca1<-river17_PCA$map$PC1
-pca17<-focal(pca1,w=matrix(1/9,nrow=3,ncol=3),fun=sd)
-plot(pca17) # alta sd alte variazioni geomorfologiche
-ggplot()+geom_raster(pca17,mapping=aes(x=x,y=y,fill=layer))+scale_fill_viridis("inferno")+ggtitle("deviazione standard 2017")
-#scale_fill_viridis(option="INSERIRE TIPO COLORE")
 
 
 # laguna di Venezia
