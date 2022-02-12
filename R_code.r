@@ -8,6 +8,7 @@ library("RStoolbox")
 library("gridExtra")
 library("ggplot2")
 library("rasterdiv") # per NDVI
+library("viridis")
 # library("rgdal")
 # install.packages("XML") # per aprire file .xml, da tutorial
 # library("XML") # comunque non apre il file prova
@@ -179,7 +180,7 @@ plot(river17_PCA$map$PC1,river17_PCA$map$PC2)
 ## classificazione
 set.seed(2)
 class_17<-unsuperClass(river17,nClasses=2) # vedi meglio per il numero di classi
-plot(class_17$map)
+plot(class_17$map) # i valori intermedi non hanno senso, quelli reali sono 1 e 2
 class_17
 # unsuperClass results
 #
