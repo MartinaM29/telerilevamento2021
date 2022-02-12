@@ -128,6 +128,9 @@ par(mfrow=c(2,1))
 plotRGB(river17,r=1,g=2,b=3,stretch="lin", main='2017')
 plotRGB(river21,r=1,g=2,b=3,stretch="lin",main='2021')
 
+river00<-brick("powell_ast_2000142_lrg.jpg")
+river06<-brick("powell_ast_2006126_lrg.jpg")
+
 # PCA
 river17_PCA<-rasterPCA(river17)
 summary(river17_PCA)
@@ -174,7 +177,8 @@ plotRGB(river17_PCA$map,r=1,b=2,g=3,stretch="lin")
 plot(river17_PCA$map$PC1,river17_PCA$map$PC2)
 
 ## classificazione
-class_17<-unsuperClass(river17,nClasses=20) # vedi meglio per il numero di classi
+set.seed(2)
+class_17<-unsuperClass(river17,nClasses=2) # vedi meglio per il numero di classi
 plot(class_17$map)
 class_17
 # unsuperClass results
@@ -189,6 +193,85 @@ class_17
 # source     : memory
 # names      : layer 
 # values     : 1, 20  (min, max)
+
+class_21<-unsuperClass(river21,nClasses=2)
+class_00<-unsuperClass(river00,nClasses=2)
+class_06<-unsuperClass(river06,nClasses=2)
+par(mfrow=c(2,2))
+plot(class_00$map,main='2000')
+plot(class_06$map,main='2006')
+plot(class_17$map,main='2017')
+plot(class_21$map,main='2021')
+# classe1= roccia
+# classe2= acqua
+
+## frequenza
+freq00<-freq(class_00$map)
+freq00
+# value   count
+# [1,]     1 4881693
+# [2,]     2 1118307
+freq06<-freq(class_06$map)
+freq06
+#     value   count
+# [1,]     1 5191304
+# [2,]     2  808696
+freq17<-freq(class_17$map)
+freq17
+# value   count
+# [1,]     1 3975656
+# [2,]     2 1021194
+freq21<-freq(class_21$map)
+freq21
+#      value   count
+# [1,]     1 4283465
+# [2,]     2  713385
+
+# proporzione
+sum00<-4881693+1118307
+sum06<-5191304+808696
+sum17<-3975656+1021194
+sum21<-4283465+713385
+
+prop00<-freq00/sum00
+prop00
+#             value     count
+# [1,] 1.666667e-07 0.8136155
+# [2,] 3.333333e-07 0.1863845
+prop06<-freq06/sum06
+prop06
+#             value     count
+# [1,] 1.666667e-07 0.8652173
+# [2,] 3.333333e-07 0.1347827
+prop17<-freq17/sum17
+prop17
+#             value     count
+# [1,] 2.001261e-07 0.7956324
+# [2,] 4.002522e-07 0.2043676
+prop21<-freq21/sum21
+prop21
+#            value     count
+# [1,] 2.001261e-07 0.8572331
+# [2,] 4.002522e-07 0.1427669
+
+## creazione di un dataframe
+area<-c("Rocce","Acqua")
+p2000<-c(81,18)
+p2006<-c(86,13)
+p2017<-c(79,20)
+p2021<-c(85,14)
+perc<-data.frame(area,p2000,p2006,p2017,p2021)
+perc
+#    area p2000 p2006 p2017 p2021
+# 1 Rocce    81    86    79    85
+# 2 Acqua    18    13    20    14
+
+## grafico
+p1<-ggplot(perc,aes(x=area,y=p2000,color=area))+geom_bar(stat="identity",fill="white")
+p2<-ggplot(perc,aes(x=area,y=p2006,color=area))+geom_bar(stat="identity",fill="white")
+p3<-ggplot(perc,aes(x=area,y=p2017,color=area))+geom_bar(stat="identity",fill="white")
+p4<-ggplot(perc,aes(x=area,y=p2021,color=area))+geom_bar(stat="identity",fill="white")
+grid.arrange(p1,p2,p3,p4,nrow=2)
 
 ## ggplot
 r17<-ggRGB(river17,1,2,3,stretch="lin")
