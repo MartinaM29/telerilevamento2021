@@ -79,8 +79,16 @@ river17
 
 # BANDE
 # B1= NIR, B2 = red, B3 = green
+NDWI00=(river00$powell_ast_2000142_lrg.3-river00$powell_ast_2000142_lrg.1)/(river00$powell_ast_2000142_lrg.1+river00$powell_ast_2000142_lrg.3)
+NDWI06=(river06$powell_ast_2006126_lrg.3-river06$powell_ast_2006126_lrg.1)/(river06$powell_ast_2006126_lrg.1+river06$powell_ast_2006126_lrg.3)
 NDWI17=(river17$lakepowell_oli_2017244_lrg.3-river17$lakepowell_oli_2017244_lrg.1)/(river17$lakepowell_oli_2017244_lrg.1+river17$lakepowell_oli_2017244_lrg.3)
-plot(NDWI17)
+NDWI21=(river21$lakepowell_oli_2021239_lrg.3-river21$lakepowell_oli_2021239_lrg.1)/(river21$lakepowell_oli_2021239_lrg.1+river21$lakepowell_oli_2021239_lrg.3)
+cl<-colorRampPalette(c('yellow','light blue','blue'))(100)
+par(mfrow=c(2,2))
+plot(NDWI00,col=cl,main='2000')
+plot(NDWI06,col=cl,main='2006')
+plot(NDWI17,col=cl,main='2017')
+plot(NDWI21,col=cl,main='2021')
 # descrivi il risultato
 
 
