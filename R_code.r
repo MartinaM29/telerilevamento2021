@@ -139,7 +139,7 @@ summary(river17_PCA)
 # call         2 -none-      call
 # model        7 princomp    list
 # map   14990550 RasterBrick S4  
-summary(river17_PCA$model)
+summary(river17_PCA$model) # fa vedere la variabilità delle singole componenti
 Importance of components:
 #                             Comp.1     Comp.2      Comp.3
 # Standard deviation     108.0645372 23.2573965 4.964194970
@@ -298,6 +298,18 @@ NDWI17=(river17$lakepowell_oli_2017244_lrg.3-river17$lakepowell_oli_2017244_lrg.
 plot(NDWI17)
 # descrivi il risultato
 
+## variabilità con la moving window
+# con NDWI
+# la variabilità si può spiegare anche con la PCA
+ndwisd17<-focal(NDWI17,w=matrix(1/9,nrow=3,ncol=3),fun=sd)
+ndwisd17 # la sd è più bassa nella roccia nuda
+plot(ndwisd17) # non fa vedere molto
+# moving window con la PCA
+pca1<-river17_PCA$map$PC1
+pca17<-focal(pca1,w=matrix(1/9,nrow=3,ncol=3),fun=sd)
+plot(pca17) # alta sd alte variazioni geomorfologiche
+ggplot()+geom_raster(pca17,mapping=aes(x=x,y=y,fill=layer))+scale_fill_viridis("inferno")+ggtitle("deviazione standard 2017")
+#scale_fill_viridis(option="INSERIRE TIPO COLORE")
 
 
 # laguna di Venezia
