@@ -40,7 +40,7 @@ plotRGB(river21,r=1,g=2,b=3,stretch="lin")
 set.seed(2)
 class_00<-unsuperClass(river00,nClasses=2)
 class_06<-unsuperClass(river06,nClasses=2)
-class_17<-unsuperClass(river17,nClasses=2) # vedi meglio per il numero di classi
+class_17<-unsuperClass(river17,nClasses=2) 
 class_21<-unsuperClass(river21,nClasses=2)
 par(mfrow=c(2,2))
 plot(class_00$map,main='2000')
@@ -83,60 +83,12 @@ NDWI00=(river00$powell_ast_2000142_lrg.3-river00$powell_ast_2000142_lrg.1)/(rive
 NDWI06=(river06$powell_ast_2006126_lrg.3-river06$powell_ast_2006126_lrg.1)/(river06$powell_ast_2006126_lrg.1+river06$powell_ast_2006126_lrg.3)
 NDWI17=(river17$lakepowell_oli_2017244_lrg.3-river17$lakepowell_oli_2017244_lrg.1)/(river17$lakepowell_oli_2017244_lrg.1+river17$lakepowell_oli_2017244_lrg.3)
 NDWI21=(river21$lakepowell_oli_2021239_lrg.3-river21$lakepowell_oli_2021239_lrg.1)/(river21$lakepowell_oli_2021239_lrg.1+river21$lakepowell_oli_2021239_lrg.3)
-cl<-colorRampPalette(c('yellow','light blue','blue'))(100)
+cl<-colorRampPalette(c('red','yellow','blue'))(100) # white,'red','yellow'
 par(mfrow=c(2,2))
 plot(NDWI00,col=cl,main='2000')
 plot(NDWI06,col=cl,main='2006')
 plot(NDWI17,col=cl,main='2017')
 plot(NDWI21,col=cl,main='2021')
-# descrivi il risultato
-
-
-## PCA
-river17_PCA<-rasterPCA(river17)
-summary(river17_PCA)
-#       Length   Class       Mode
-# call         2 -none-      call
-# model        7 princomp    list
-# map   14990550 RasterBrick S4  
-summary(river17_PCA$model) # fa vedere la variabilità delle singole componenti
-Importance of components:
-#                             Comp.1     Comp.2      Comp.3
-# Standard deviation     108.0645372 23.2573965 4.964194970
-# Proportion of Variance   0.9538081  0.0441791 0.002012761
-# Cumulative Proportion    0.9538081  0.9979872 1.000000000
-plot(river17_PCA$map)
-river17_PCA
-# $call
-# rasterPCA(img = river17)
-#
-# $model
-# Call:
-# princomp(cor = spca, covmat = covMat[[1]])
-#
-# Standard deviations:
-#     Comp.1     Comp.2     Comp.3 
-# 108.064537  23.257397   4.964195 
-#
-#  3  variables and  4996850 observations.
-#
-# $map
-# class      : RasterBrick 
-# dimensions : 1825, 2738, 4996850, 3  (nrow, ncol, ncell, nlayers)
-# resolution : 1, 1  (x, y)
-# extent     : 0, 2738, 0, 1825  (xmin, xmax, ymin, ymax)
-# crs        : NA 
-# source     : memory
-# names      :        PC1,        PC2,        PC3 
-# min values : -225.67711,  -93.59984,  -52.14022 
-# max values :  186.15028,   96.89894,   31.99906 
-#
-#
-# attr(,"class")
-# [1] "rasterPCA" "RStoolbox"
-plotRGB(river17_PCA$map,r=1,b=2,g=3,stretch="lin")
-plot(river17_PCA$map$PC1,river17_PCA$map$PC2)
-
 
 
 ## frequenza
@@ -189,29 +141,69 @@ prop21
 # [2,] 4.002522e-07 0.1427669
 
 ## creazione di un dataframe
-area<-c("Rocce","Acqua")
+area<-c("Altro","Acqua")
 p2000<-c(81,18)
 p2006<-c(86,13)
 p2017<-c(79,20)
 p2021<-c(85,14)
 perc<-data.frame(area,p2000,p2006,p2017,p2021)
 perc
-#    area p2000 p2006 p2017 p2021
-# 1 Rocce    81    86    79    85
-# 2 Acqua    18    13    20    14
+#      area p2000 p2006 p2017 p2021
+#   1 Altro   81    86    79    85
+#  2 Acqua    18    13    20    14
 
-## grafico
+## grafico a barre -> probabilmente non lo inserisco
 p1<-ggplot(perc,aes(x=area,y=p2000,color=area))+geom_bar(stat="identity",fill="white")
 p2<-ggplot(perc,aes(x=area,y=p2006,color=area))+geom_bar(stat="identity",fill="white")
 p3<-ggplot(perc,aes(x=area,y=p2017,color=area))+geom_bar(stat="identity",fill="white")
 p4<-ggplot(perc,aes(x=area,y=p2021,color=area))+geom_bar(stat="identity",fill="white")
 grid.arrange(p1,p2,p3,p4,nrow=2)
 
-## ggplot
-r17<-ggRGB(river17,1,2,3,stretch="lin")
-r21<-ggRGB(river21,1,2,3,stretch="lin")
-grid.arrange(r17,r21,nrow=2)
-
+## PCA
+river00_PCA<-rasterPCA(river00)
+summary(river00_PCA$model)
+river06_PCA<-rasterPCA(river06)
+summary(river06_PCA$model)
+river17_PCA<-rasterPCA(river17)
+summary(river17_PCA$model) # fa vedere la variabilità delle singole componenti
+# Importance of components:
+#                             Comp.1     Comp.2      Comp.3
+# Standard deviation     108.0645372 23.2573965 4.964194970
+# Proportion of Variance   0.9538081  0.0441791 0.002012761
+# Cumulative Proportion    0.9538081  0.9979872 1.000000000
+plot(river17_PCA$map)
+river17_PCA
+# $call
+# rasterPCA(img = river17)
+#
+# $model
+# Call:
+# princomp(cor = spca, covmat = covMat[[1]])
+#
+# Standard deviations:
+#     Comp.1     Comp.2     Comp.3 
+# 108.064537  23.257397   4.964195 
+#
+#  3  variables and  4996850 observations.
+#
+# $map
+# class      : RasterBrick 
+# dimensions : 1825, 2738, 4996850, 3  (nrow, ncol, ncell, nlayers)
+# resolution : 1, 1  (x, y)
+# extent     : 0, 2738, 0, 1825  (xmin, xmax, ymin, ymax)
+# crs        : NA 
+# source     : memory
+# names      :        PC1,        PC2,        PC3 
+# min values : -225.67711,  -93.59984,  -52.14022 
+# max values :  186.15028,   96.89894,   31.99906 
+#
+#
+# attr(,"class")
+# [1] "rasterPCA" "RStoolbox"
+river21_PCA<-rasterPCA(river21)
+summary(river21_PCA$model)
+plotRGB(river17_PCA$map,r=1,b=2,g=3,stretch="lin")
+plot(river17_PCA$map$PC1,river17_PCA$map$PC2)
 
 ## variabilità con la moving window
 # con NDWI
@@ -227,6 +219,13 @@ ggplot()+geom_raster(pca17,mapping=aes(x=x,y=y,fill=layer))+scale_fill_viridis("
 #scale_fill_viridis(option="INSERIRE TIPO COLORE")
 
 
+## ggplot
+r17<-ggRGB(river17,1,2,3,stretch="lin")
+r21<-ggRGB(river21,1,2,3,stretch="lin")
+grid.arrange(r17,r21,nrow=2)
+
+
+##############################################################################################################################################################
 
 
 WB_EU20<-brick("g2_BIOPAR_WB-QUAL_QL_202006210000_EURO_PROBAV_V2.0.1.png") 
