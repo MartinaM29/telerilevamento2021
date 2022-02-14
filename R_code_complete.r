@@ -6,7 +6,7 @@
 ## Summary
 # 1. Remote sensing
 # 2. Time Series Greenland
-# 3. 
+# 3. Use of Copernicus data
 # 4. Use of knitr function
 # 5. Multivariate analysis
 # 6. Image classification
@@ -15,7 +15,7 @@
 # 9. Land cover: image classification and multitemporal analysis
 # 10. Landscape and mineralogical variability
 
-#----------------------------------------------------------------------------------------------------
+#------------------------------------------------------------------------------------------
 
 # 1. Remote Senting
 
@@ -25,33 +25,34 @@
 ### R_code_remote_sensing.r ###
 
 
-#install.packages("raster") #se ancora non si è installato il pacchetto
-library(raster) #COSA FA RASTER, il pacchetto sp, gestisce tutti i dati all'interno del softwer, in questo caso raster
+# install.packages("raster") #se ancora non si è installato il pacchetto
+library(raster) 
+# raster legge, scrive, analizza e modella i dati spaziali
+# il pacchetto sp, gestisce tutti i dati all'interno del softwer, in questo caso raster
 
+# set working directory
 #setwd("~/lab/")#Linux
 setwd("C:/lab_telerilevamento/")  # Windows
 # setwd("/Users/name/lab/")#Mac
+# queste operazioni devono essere eseguite ogni volta che si apre R
 
-
-#zona di studio Riserva di Parakana
-p224r63_2011 <- brick("p224r63_2011_masked.grd") #con brick si importano immagini dall'esterno, si carica l'intero blocco delle bande, le "" si usano per chiamare file fuori da R
-#masked indica che l'immagine è già stata ripulita da un po' di rumore
+# zona di studio Riserva di Parakana
+p224r63_2011 <- brick("p224r63_2011_masked.grd") 
+# con brick si importano immagini (a più bande) dall'esterno, si carica l'intero blocco delle bande, le "" si usano per chiamare file fuori da R
+# masked indica che l'immagine è già stata ripulita da un po' di rumore
 # quindi il file "p224r63_2011" contiene tutte le bande Landsat
-#queste operazioni devono essere eseguite ogni volta che si apre R
-plot(p224r63_2011) #plot con tutte le bande, 7 grafici
-p224r63_2011 #così si vedono tutte le caratteristiche del file
+plot(p224r63_2011) # plot con tutte le bande, 7 grafici
+p224r63_2011 # così si vedono tutte le caratteristiche del file
 
-###
-#class      : RasterBrick                                                -> quindi formata da tanti raster nella stessa immagine
-#dimensions : 1499, 2967, 4447533, 7  (nrow, ncol, ncell, nlayers)
-#resolution : 30, 30  (x, y)
-#extent     : 579765, 668775, -522705, -477735  (xmin, xmax, ymin, ymax) 
-#crs        : +proj=utm +zone=22 +datum=WGS84 +units=m +no_defs          -> sistema di riferimento, proj = proiezione, zone = fuso
-#source     : p224r63_2011_masked.grd 
-#names      :       B1_sre,       B2_sre,       B3_sre,       B4_sre,       B5_sre,        B6_bt,       B7_sre 
-#min values : 0.000000e+00, 0.000000e+00, 0.000000e+00, 1.196277e-02, 4.116526e-03, 2.951000e+02, 0.000000e+00 
-#max values :    0.1249041,    0.2563655,    0.2591587,    0.5592193,    0.4894984,  305.2000000,    0.3692634 
-###
+# class      : RasterBrick                                                -> quindi formata da tanti raster nella stessa immagine
+# dimensions : 1499, 2967, 4447533, 7  (nrow, ncol, ncell, nlayers)
+# resolution : 30, 30  (x, y)
+# extent     : 579765, 668775, -522705, -477735  (xmin, xmax, ymin, ymax) 
+# crs        : +proj=utm +zone=22 +datum=WGS84 +units=m +no_defs          -> sistema di riferimento, proj = proiezione, zone = fuso
+# source     : p224r63_2011_masked.grd 
+# names      :       B1_sre,       B2_sre,       B3_sre,       B4_sre,       B5_sre,        B6_bt,       B7_sre 
+# min values : 0.000000e+00, 0.000000e+00, 0.000000e+00, 1.196277e-02, 4.116526e-03, 2.951000e+02, 0.000000e+00 
+# max values :    0.1249041,    0.2563655,    0.2591587,    0.5592193,    0.4894984,  305.2000000,    0.3692634 
 
 
 ## Bande Landsat
@@ -65,62 +66,63 @@ p224r63_2011 #così si vedono tutte le caratteristiche del file
 
 
 ## colorRampPalette, creazione colori sulla base della riflettanza
-cls <- colorRampPalette(c("red","pink","orange","purple")) (200) #cambia la scala di colori, il rosso da i valori più bassi di riflettanza sul rosso e i valori più alti di riflettanza sul viole, per ogni banda
+cls <- colorRampPalette(c("red","pink","orange","purple")) (200) 
+# cambia la scala di colori, il rosso da i valori più bassi di riflettanza sul rosso e i valori più alti di riflettanza sul viola, per ogni banda
 # la c() indica il vettore
 plot(p224r63_2011, col=cls)
 dev.off() #chiude i grafici, equivale alla 'x'
 
 # altre opzioni di paletta colori
-#cls <- colorRampPalette(c('black','grey','light grey'))(100) # cambio paletta
-#plot(p224r63_2011, col=cls)
-#dev.off()
+# cls <- colorRampPalette(c('black','grey','light grey'))(100) # cambio paletta
+# plot(p224r63_2011, col=cls)
+# dev.off()
 
-#cls <- colorRampPalette(c('dark green','light green','yellow'))(100) # cambio paletta
-#plot(p224r63_2011, col=cls)
-#dev.off()
+# cls <- colorRampPalette(c('dark green','light green','yellow'))(100) # cambio paletta
+# plot(p224r63_2011, col=cls)
+# dev.off()
 
 
 ## plot della sola banda del blu con la color Ramp Palette predefinita
-#p224r63_2011 immagine contenente tutte le bande
-#B1_sre banda contenente la banda blu utilizzando $ come legante di due blocchi in questo caso l'immagine alla banda 1
+# p224r63_2011 immagine contenente tutte le bande
+# B1_sre banda contenente la banda blu utilizzando $ come legante di due blocchi in questo caso l'immagine alla banda 1
 plot(p224r63_2011$B1_sre) 
 dev.off()
 
-#plot(p224r63_2011$B2_sre)#plot banda verde
-#dev.off()
-#la stessa cosa può essere fatta con tutte le bande
+# plot(p224r63_2011$B2_sre)#plot banda verde
+# dev.off()
+#  la stessa cosa può essere fatta con tutte le bande
 
 ## plot della banda uno con la scelta di una color ramp palette
 cl <- colorRampPalette(c('dark green','light green','yellow'))(100)
 plot(p224r63_2011$B1_sre, col=cl)
 
 ## funzione par: multiframe (mf)
-#par fa un settaggio dei parametri grafici
-#vogliamo impostare un grafico con sole 2 bande una accanto all'altra
-par(mfrow=c(1,2)) #1 riga e 2 colonne
-#vediamo che il sistema è a più blocchi, pertanto viene chiamato vettore
+# par fa un settaggio dei parametri grafici
+# vogliamo impostare un grafico con sole 2 bande una accanto all'altra
+par(mfrow=c(1,2)) # 1 riga e 2 colonne
+# vediamo che il sistema è a più blocchi, pertanto viene chiamato vettore
 plot(p224r63_2011$B1_sre) 
 plot(p224r63_2011$B2_sre) 
 
-#2 righe e 1 colonna
+# 2 righe e 1 colonna
 par(mfrow=c(2,1))
 plot(p224r63_2011$B1_sre) 
 plot(p224r63_2011$B2_sre)
 
 # par(mfcol...)
-par(mfcol=c(1,2)) #1 riga, 2 colonne
+par(mfcol=c(1,2)) #  1 riga, 2 colonne
 plot(p224r63_2011$B1_sre) 
 plot(p224r63_2011$B2_sre)
 
 
 ## plot delle prime 4 bande di Landsat
-par(mfrow=c(4,1)) #4 righe, 1 colonna
+par(mfrow=c(4,1)) # 4 righe, 1 colonna
 plot(p224r63_2011$B1_sre) 
 plot(p224r63_2011$B2_sre)
 plot(p224r63_2011$B3_sre) 
 plot(p224r63_2011$B4_sre)
 
-#2 righe, 2 colonne
+# 2 righe, 2 colonne
 par(mfrow=c(2,2))
 plot(p224r63_2011$B1_sre) 
 plot(p224r63_2011$B2_sre)
@@ -150,29 +152,29 @@ plot(p224r63_2011$B4_sre, col=cln)
 # B6: infrarosso termico (infrarosso lontano)
 # B7: infrarosso medio (altro sensore per l'infrarosso medio)
 
-#le bande avranno dei valori per ogni pixel compresi fra 0 e 1, 0 per la banda che assorbe molto 1 per la banda che riflette molto
+# le bande avranno dei valori per ogni pixel compresi fra 0 e 1, 0 per la banda che assorbe molto 1 per la banda che riflette molto
 
 ## schema RGB = ogni schermo ha uno schema fisso per mostrare i colori, chiamato appunto RGB
 # per vedere quindi un'immagine come se fosse a colori naturali, si monta R con la banda 3, G con la banda 2 e B con la banda 1 (schema 3,2,1)
 # funzione: plotRGB
 
 plotRGB(p224r63_2011,r=3,g=2,b=1, stretch="Lin")
-#stretch prende i valori delle singole bande (quindi la riflettanza delle singole bande) e li tira per fare in modo che non ci sia schiacciamento in una sola parte del colore
-#Lin = lineare
-#hist = histogram stretch, non lineare
-#stretch è solo per scopi di visualizzazione non cambia i valori
-#l'immagine creata quindi si chiama immagine a colori naturali
-#in questo caso non si usano i nomi delle bande perchè la funzione è pensata per il numero del layer
+# stretch prende i valori delle singole bande (quindi la riflettanza delle singole bande) e li tira per fare in modo che non ci sia schiacciamento in una sola parte del colore
+# Lin = lineare
+# hist = histogram stretch, non lineare
+# stretch è solo per scopi di visualizzazione non cambia i valori
+# l'immagine creata quindi si chiama immagine a colori naturali
+# in questo caso non si usano i nomi delle bande perchè la funzione è pensata per il numero del layer
 
 
 # cambio di colori
-plotRGB(p224r63_2011,r=4,g=3,b=2, stretch="Lin") #NIR=red,rosso=green,verde=blue
-#NB: la vegetazione assorbe la banda blu e rossa e rifletta la banda verde e tantissimo la banda NIR
-#visualizzazione in falsi colori = falsi rispetto al nostro occhio
+plotRGB(p224r63_2011,r=4,g=3,b=2, stretch="Lin") # NIR=red,rosso=green,verde=blue
+# NB: la vegetazione assorbe la banda blu e rossa e rifletta la banda verde e tantissimo la banda NIR
+# visualizzazione in falsi colori = falsi rispetto al nostro occhio
 plotRGB(p224r63_2011,r=3,g=4,b=2, stretch="Lin")
-#la parte viola rappresenta il suolo nudo
+# la parte viola rappresenta il suolo nudo
 plotRGB(p224r63_2011,r=3,g=2,b=4, stretch="Lin")
-#il suolo nudo in questo caso è giallo
+# il suolo nudo in questo caso è giallo
 
 
 # multiframe 2x2
@@ -190,7 +192,7 @@ plotRGB(p224r63_2011,r=3,g=2,b=1, stretch="Lin")
 plotRGB(p224r63_2011,r=4,g=3,b=2, stretch="Lin")
 plotRGB(p224r63_2011,r=3,g=4,b=2, stretch="Lin")
 plotRGB(p224r63_2011,r=3,g=2,b=4, stretch="Lin")
-dev.off() #per chiudere bene la funzione pdf()
+dev.off() # per chiudere bene la funzione pdf()
 
 
 # salva come jpeg
@@ -204,35 +206,35 @@ dev.off()
 
 
 # stretch non lineare
-#confronto tra 3 immagini
+# confronto tra 3 immagini
 par(mfrow=c(3,1))
-plotRGB(p224r63_2011, r=3, g=2, b=1, stretch="Lin") #immagine a colori naturali
-plotRGB(p224r63_2011, r=3, g=4, b=2, stretch="Lin") #falsi colori, NIR sul verde
-plotRGB(p224r63_2011, r=3, g=4, b=2, stretch="hist") #falsi colori, con stretch hist
-#le zone viola all'interno della foresta potrebbero proprio rapprsentare le zone più umide
+plotRGB(p224r63_2011, r=3, g=2, b=1, stretch="Lin") # immagine a colori naturali
+plotRGB(p224r63_2011, r=3, g=4, b=2, stretch="Lin") # falsi colori, NIR sul verde
+plotRGB(p224r63_2011, r=3, g=4, b=2, stretch="hist") # falsi colori, con stretch hist
+# le zone viola all'interno della foresta potrebbero proprio rapprsentare le zone più umide
 
-#con RGB non c'è la legenda perchè i colori derivano dalle riflettanze, non le decidiamo noi
+# con RGB non c'è la legenda perchè i colori derivano dalle riflettanze, non le decidiamo noi
 
 
 ## set multitemporale
 # come è cambiata l'area nel corso degli anni sfruttando i dati Landsat e le funzioni appena usate
 # inserimento immagine 1988_masked
-p224r63_1988<-brick("p224r63_1988_masked.grd") #importazione dell'intera immagine
+p224r63_1988<-brick("p224r63_1988_masked.grd") # importazione dell'intera immagine
 p224r63_1988
-plot(p224r63_1988) #plot dell'intera immagine, con visualizzazionne delle singole bande
+plot(p224r63_1988) # plot dell'intera immagine, con visualizzazionne delle singole bande
 
-plotRGB(p224r63_1988,r=3,g=2,b=1,stretch="Lin") #plot in colori naturali, stretch lineare
-plotRGB(p224r63_1988,r=4,g=3,b=2,stretch="Lin") #falsi colori, con la componente NIR nel rosso
+plotRGB(p224r63_1988,r=3,g=2,b=1,stretch="Lin") # plot in colori naturali, stretch lineare
+plotRGB(p224r63_1988,r=4,g=3,b=2,stretch="Lin") # falsi colori, con la componente NIR nel rosso
 
-#multiframe 1988-2011 in falsi colori con componente NIR nel rosso
-#stretch lineare e non lineare
+# multiframe 1988-2011 in falsi colori con componente NIR nel rosso
+# stretch lineare e non lineare
 par(mfrow=c(2,2))
 plotRGB(p224r63_1988,r=4,g=3,b=2,stretch="Lin")
 plotRGB(p224r63_2011,r=4,g=3,b=2,stretch="Lin")
 plotRGB(p224r63_1988,r=4,g=3,b=2,stretch="hist")
 plotRGB(p224r63_2011,r=4,g=3,b=2,stretch="hist")
-#1988:passaggio graduale tra componente naturale ed antropica
-#2011:soglia netta tra la foresta pluviale e l'impatto naturale
+# 1988:passaggio graduale tra componente naturale ed antropica
+# 2011:soglia netta tra la foresta pluviale e l'impatto naturale
 
 # salva come pdf
 pdf("1988_Vs_2011_Lin_hist_2.pdf")
@@ -260,11 +262,11 @@ dev.off()
 
 
 
-#-----------------------------------------------------------------------------------------------------
+#--------------------------------------------------------------------------------------------------
 
 # 2. Time Series Greenland
 
-#---------------------------------------------------------------------------------------------------
+#--------------------------------------------------------------------------------------------------
 
 
 ### R code ###
@@ -277,11 +279,11 @@ dev.off()
 # install.packages("raster")
 library(raster)
 # install.packages("rasterVis")
-library(rasterVis) #visualizzazione di dati raster
+library(rasterVis) #  e interazione di dati raster
 # install.packages("knitr")
-library(knitr)
+library(knitr) # generazione di report dinamici
 
-##c reazione cartella "greenland" all'interno della working directory "lab_telerilevamento"
+## creazione cartella "greenland" all'interno della working directory "lab_telerilevamento"
 setwd ("C:/lab_telerilevamento/greenland") #windows
 # setwd("~/lab_telerilevamento/greenland") # Linux
 # setwd("/Users/name/Desktop/lab_telerilevamento/greenland") # Mac
@@ -324,9 +326,9 @@ TGr<-stack(import)
 plot(TGr) # in questo modo non importa più fare par()
 TGr
 
-plotRGB(TGr,r=1, g=2, b=3, stretch="Lin") #1=2000, 2=2005, 3=2010
-#plot dei valori dei vari anni
-#plot rosso = valori alti in 2000, verde = valori alti 2005, blu = valori alti in 2010
+plotRGB(TGr,r=1, g=2, b=3, stretch="Lin") # 1=2000, 2=2005, 3=2010
+# plot dei valori dei vari anni
+# plot rosso = valori alti in 2000, verde = valori alti 2005, blu = valori alti in 2010
 plotRGB(TGr,r=1, g=2, b=3, stretch="hist")
 plotRGB(TGr,r=2, g=3, b=4, stretch="Lin")
 plotRGB(TGr,r=2, g=3, b=4, stretch="hist")
@@ -377,9 +379,7 @@ totmelt # per vedere anche i valori min e max di scioglimento
 ### R_code_copernicus.r ###
 
 
-## visualizzazione dati da Copernicus, file 1: Water Lavel, V2, data 12/10/1992
-# file 2: Soil Water Index
-# file 3: Lake Water Quality, 300 m, data 11/07/21
+## visualizzazione dati da Copernicus
 
 #install.packages("raster")
 library(raster)
@@ -391,12 +391,8 @@ library(ncdf4) # all'interno del pacchetto CRAN, possono essere aperti e letti f
 setwd("C:/lab_telerilevamento/") # Windows
 #setwd("/Users/name/Desktop/lab_telerilevamento/") # Mac
 
-# inserimento file scaricato, funzione raster perchè è un solo layer
-WL<-raster("c_gls_WL_202108020049_0000000000000_ALTI_V2.1.0.json")
-# il formato .json da errore -> deve essere.nc !!!!
 
-# quindi si è usato il file
-SWI<-raster("c_gls_SWI_202104131200_GLOBE_ASCAT_V3.1.1.nc")
+SWI<-raster("c_gls_SWI_202104131200_GLOBE_ASCAT_V3.1.1.nc") # il file deve essere .nc (bisogna fare il login in copernicus)
 SWI
 # gli warnings sono prinicpalmente dovuti al sistema di riferimento non impostato, ma R si riasseta da solo
 
@@ -408,10 +404,10 @@ plot(SWI, col=cl, main="Soil Water Index")
 # funzione aggregate
 # il fattore è il determinante dell'aggregazione
 SWI_aggr<-aggregate(SWI,fact=100,main="SWI aggregato") # linearmente si prendono 100*100 pixel e si uniscono in uno solo
-plot(SWI_aggr,col=cl) #ricampionamento molto pesante!
+plot(SWI_aggr,col=cl) # ricampionamento molto pesante!
 
 
-#----------------------------------------------------------------------------------------------------------------------
+#---------------------------------------------------------------------------------------------------
 
 # 4. Use of knitr function
 
@@ -429,7 +425,7 @@ setwd("C:/lab_telerilevamento/") # Windows
 # setwd("/Users/name/Desktop/lab/") # Mac
 
 
-## R_code_remote_sensing_temp file su cui si lavora.r
+## R_code_remote_sensing_temp.r file su cui si lavora
 # con Ctrl A selezionare tutto il testo e copiarlo su un file di testo
 # togliere i dev.off()
 # ovviamente nella cartella lab_telerilevamento ci devono essere tutti i dati presenti e utilizzati all'interno del codice
@@ -460,7 +456,7 @@ stitch("R_code_remote_sensing_temp.r.txt", template=system.file("misc", "knitr-t
 # il secondo asse viene fatto passare perpendicolarmente al primo
 # in questo modo, con la creazione di questi due nuovi assi, fa si che sull'asse principale ci sia la maggior variabilità (90%)
 # sul secondo ci sarà la restante variabilità (10%)
-# in questo modo si puù utilizzare per l'analisi solo l'asse principale perchè già ci fa vedere il 90% delle informazioni
+# in questo modo si può utilizzare per l'analisi solo l'asse principale perchè già ci fa vedere il 90% delle informazioni
 # questo permette quindi di ridurre il sistema da 2 bande ad 1 banda
 # PCA (Principal Component Analysis)
 
@@ -469,7 +465,7 @@ stitch("R_code_remote_sensing_temp.r.txt", template=system.file("misc", "knitr-t
 # install.packages("raster")
 library(raster)
 # install.packages("RStoolbox")
-library(RStoolbox)
+library(RStoolbox) # permette di fare diverse analisi come il calcolo degli indici spettrali, la PCA, la classificazione (supervisionata e non)
 
 
 # setwd("~/lab_telerilevamento/") # Linux
@@ -477,7 +473,7 @@ setwd("C:/lab_telerilevamento/") # Windows
 # setwd("/Users/name/Desktop/lab/") # Mac 
 
 
-## caricamento file, le immagini Landsat hanno 7 bande
+## caricamento file
 # Bande Landsat
 # B1: blue 
 # B2: green
@@ -487,7 +483,7 @@ setwd("C:/lab_telerilevamento/") # Windows
 # B6: infrarosso termico
 # B7: infrarosso medio
 
-p224r63_2011<-brick("p224r63_2011_masked.grd") #brick carica tutto il set, mentre raster unn pacchetto per volta
+p224r63_2011<-brick("p224r63_2011_masked.grd") # brick carica tutto il set, mentre raster unn pacchetto per volta
 p224r63_2011
 
 # class      : RasterBrick 
@@ -603,11 +599,11 @@ plot(p224r63_2011_res_PCA$map$PC1, p224r63_2011_res_PCA$map$PC2)
 # str funzione che da info dettagliate su tutto il file
 
 
-#------------------------------------------------------------------------------------------------------
+#----------------------------------------------------------------------------------------------------
 
 # 6. Image classification
 
-#-----------------------------------------------------------------------------------------------------
+#----------------------------------------------------------------------------------------------------
 
 
 ### R_code_classification.r ###
@@ -636,7 +632,7 @@ SO
 plotRGB(SO,r=1,g=2,b=3,stretch="lin") # plot RGB originale
 
 
-### classificazione dell'immagine
+### classificazione dell'immagine: aspetti teorici
 # il valore di un pixel di vegetazione (ponendo 3 assi, del blu, del verde e del rosso), 
 # assorbe nel blu e nel rosso quindi nei loro rispettivi assi avrà un valore molto basso, mentre nel verde, che riflette, avrà un valore molto alto
 # incrociando questi tre valori si otterrà il valore del pixel considerato (P1)
@@ -727,7 +723,7 @@ plotRGB(GC, r=1, g=2, b=3, stretch="lin")
 plot(GCc4$map)
 
 
-#------------------------------------------------------------------------------------------------------
+#----------------------------------------------------------------------------------------------------
 
 # 7. Use ggplot2 function
 
@@ -738,10 +734,12 @@ plot(GCc4$map)
 
 library(raster)
 library(RStoolbox)
-library(ggplot2)
-library(gridExtra)
+library(ggplot2) # libreria grafica
+library(gridExtra) # fornisce una serie di funzioni per lavorare con i grafici
 
-setwd("~/lab/")
+# setwd("~/lab_telerilevamento/") # Linux
+setwd("C:/lab_telerilevamento/") # Windows
+# setwd("/Users/name/Desktop/lab/") # Mac
 
 p224r63 <- brick("p224r63_2011_masked.grd")
 
@@ -751,10 +749,10 @@ ggRGB(p224r63,4,3,2, stretch="lin")
 p1 <- ggRGB(p224r63,3,2,1, stretch="lin")
 p2 <- ggRGB(p224r63,4,3,2, stretch="lin")
 
-grid.arrange(p1, p2, nrow = 2) # this needs gridExtra
+grid.arrange(p1, p2, nrow = 2) # ha bisogno di gridExtra
 
 
-#-----------------------------------------------------------------------------------------------------
+#----------------------------------------------------------------------------------------------------
 
 # 8. Vegetation indeces
 
@@ -765,14 +763,14 @@ grid.arrange(p1, p2, nrow = 2) # this needs gridExtra
 # una pianta riflette molto nell'infrasso vicino mentre assorbe molto la radiazione rossa
 
 library(raster) # require(raster), funzione require fa la sessa cosa di library
-library(RStoolbox) # for vegetation indices calculation
+library(RStoolbox)
 # install.packages("rasterdiv")
-library(rasterdiv) # for the worldwise NDVI
+library(rasterdiv) # per il calcolo di NDVI
 # raster diversity
 # si può trovare un dataset gratuito derivato direttamente da copernicus
 # l'input data-set è NDVI
 # install.packages("rasterVis")
-library(rasterVis)
+library(rasterVis) # implementa i metodi di visualizzazione
 
 
 #setwd("~/lab_telerilevamento/") # Linux
@@ -831,7 +829,6 @@ plot(DVI2,col=cl,main="DVI in time 2")
 # NB: all'occhio umano risalta molto il colore giallo
 
 # per ogni pixel DVI1-DVCI2
-# 
 difDVI<-DVI1-DVI2 #warning:Raster objects have different extents
 cld<-colorRampPalette(c('blue','white','red'))(100)
 plot(difDVI,col=cld)
@@ -890,7 +887,7 @@ levelplot(copNDVI)
 # anni '80 crisi delle piogge acide, le conifere che hanno le foglie ad ago sono già acide, e questa forte acidità ha creato gravi malattie alle piante
 
 
-#-----------------------------------------------------------------------------------------------------------------
+#--------------------------------------------------------------------------------------------------------
 
 # 9. Land cover: image classification and multitemporal analysis
 
@@ -923,30 +920,30 @@ par(mfrow=c(1,2))
 plotRGB(defor1,r=1,g=2,b=3,stretch="lin")
 plotRGB(defor2,r=1,g=2,b=3,stretch="lin")
 
-#grafici multipli per ggplot (multiframe with ggplot2 and grid extra)
+# grafici multipli per ggplot (multiframe with ggplot2 and grid extra)
 p1<-ggRGB(defor1,r=1,g=2,b=3,stretch="lin")
 p2<-ggRGB(defor2,r=1,g=2,b=3,stretch="lin")
 grid.arrange(p1,p2,nrow=2)
 
 
-#classificazione, unsupervised
-#classi: un paio per facilitare l'esercizio, ma sono a libera scelta
-#una per la foresta amazzonica e una agricola
+# classificazione, unsupervised
+# classi: un paio per facilitare l'esercizio, ma sono a libera scelta
+# una per la foresta amazzonica e una agricola
 d1c<-unsuperClass(defor1,nClasses=2)
-#set.seed() would allow you to attain the same results
+# set.seed() per ottenere le stesse classi
 d1c
 plot(d1c$map)
 
 d2c<-unsuperClass(defor2,nClasses=2)
 d2c
 plot(d2c$map)
-#3 classes
+# 3 classi
 d2c3<-unsuperClass(defor2,nClasses=3)
 d2c3
 plot(d2c3$map)
 
 # quanta foresta è stata persa?
-# quanti pixel ci sono in u na classe (frequenza)
+# quanti pixel ci sono in una classe (frequenza)
 freq(d1c$map)
 # value  count
 #[1,]     1 305615
@@ -955,12 +952,12 @@ freq(d1c$map)
 # sommavalori
 sum1<-305615+35677
 # proporzione
-prop1<-freq(d1c$map)/sum1#freq precedente/tot
+prop1<-freq(d1c$map)/sum1 # freq precedente/tot
 # value     count
 #[1,] 2.930042e-06 0.8954649
 #[2,] 5.860085e-06 0.1045351
 
-#seconda mappa
+# seconda mappa
 defor2
 freq(d2c$map)
 sum2<-342726
@@ -969,12 +966,12 @@ prop2<-freq(d2c$map)/sum2
 #[1,] 2.917783e-06 0.4780145
 #[2,] 5.835565e-06 0.5219855
 
-#per fare le % basta moltiplicare la prop *100
+# per fare le % basta moltiplicare la prop *100
 
-#generazione di un dataframe
-#prima colonna di fattori, cover (forest and agriculture)
-#% iniziale di inizio (anni 92-06) -> % 1992
-#% 2006
+# generazione di un dataframe
+# prima colonna di fattori, cover (forest and agriculture)
+# % iniziale di inizio (anni 92-06) -> % 1992
+# % 2006
 cover<-c("Forest","Agriculture")
 percent_1992<-c(89.54,10.45)
 percent_2006<-c(47.80,52.19)
@@ -983,7 +980,7 @@ percentages
 
 p1<-ggplot(percentages,aes(x=cover,y=percent_1992,color=cover))+geom_bar(stat="identity",fill="white")
 p2<-ggplot(percentages,aes(x=cover,y=percent_2006,color=cover))+geom_bar(stat="identity",fill="white")
-grid.arrange(p1,p2,nrow=1) #dal pacchetto gridExtra
+grid.arrange(p1,p2,nrow=1) #d al pacchetto gridExtra
 
 
 ### classificazione unsupervised (non supervisionata da noi, fa il software in automatico)
@@ -1016,7 +1013,7 @@ d1c<-unsuperClass(defor1,nClasses=3)
 plot(d1c$map)
 d2c<-unsuperClass(defor2,nClasses=3)
 plot(d2c$map)
-# set.seed() è una funzione che aiuta ad ottenre lo stesso risultato per la classificazione
+# set.seed() 
 
 par(mfrow=c(2,2))
 plotRGB(defor1,r=1,g=2,b=3,stretch="lin")
@@ -1050,7 +1047,7 @@ prop2<-freq(d2c$map)/somma2
 # [2,] 5.835565e-06 0.2454322
 # [3,] 8.753348e-06 0.4485361
 
-# # percentuali
+## percentuali
 perc1<-prop1*100
 perc2<-prop2*100
 
@@ -1093,9 +1090,7 @@ library(viridis) # serve per i colori
 setwd("C:/lab_telerilevamento/") # Windows
 # setwd("/Users/name/Desktop/lab/") # Mac
 
-## funzioni per caricare le immagini
-# raster per catturare solo il primo strato
-# brick per caricare tutto il pacchetto
+
 # l'immagine che useremo ha 3 livelli
 # NIR=1, RED=2, GREEN=3
 sentinel<-brick("sentinel.png")
